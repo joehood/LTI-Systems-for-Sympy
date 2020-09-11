@@ -1,0 +1,16 @@
+**/bak
+**/build
+**/dist
+**/.vs
+**/__pycache__
+**/temp
+*.pyc
+*.pyd
+*.suo
+*.zip
+*.dll
+*.c
+*.log
+*.lnk
+psspd_log.txt
+installer/PDinstaller/**

@@ -1,44 +1,120 @@
 # Symbolic LTI System Tools for Python (ltisym) 
 
-A package for linear, time invariant control systems for symbolic python. 
+A module for symbolic manipulation of linear, time-invariant control systems. 
 
-## Installation
 
-There is a python installer for this package. You can download the *.zip* file in the `dist` folder (which may not be up-to-date) or clone the whole repository using
-```
-(coming soon)
-```
-After extracting, cd to the direcory and run
-```
-python setup.py install
-```
+### Example Usage
 
-### Creating and converting between models
-You can create a State Space and Transfer Function models symbolically, and convert bewteen them:
+
 ```python
-from sympy import *
-from lti_systems.models import StateSpaceModel as ss
-from lti_systems.models import TransferFunctionModel as tf
+import sympy
+import ltisym
 
-var('s a0 a1 a2 b0 b1 b2')
+# define a transfer function and convert to state space:
 
-sfunc = (a2*s**2 + a1*s + a0)/(s**3 + b2*s**2 + b1*s + b0)
+sympy.var('s a0 a1 a2 b0 b1 b2')
 
-sys1 = tf(Matrix([sfunc]))
+tf = ltisym.TransferFunction(
+       (a2*s**2 + a1*s + a0) / 
+    (s**3 + b2*s**2 + b1*s + b0)
+)
 
-sys2 = ss(sys1)
+ss = ltisym.StateSpace(tf)
 
-print("A = {}".format(sys2.represent[0]))
-print("B = {}".format(sys2.represent[1]))
-print("C = {}".format(sys2.represent[2]))
-print("D = {}".format(sys2.represent[3]))
+print(tf)
+print(ss)
+
+# define a state space and convert to transfer function:
+
+var('a11 a12 a21 a22 b1 b2 c1 c2 d1')
+
+a = Matrix([[a11, a12],
+            [a21, a22]])
+
+b = Matrix([[b1],
+            [b2]])
+
+c = Matrix([[c1, c2]])
+
+d = Matrix([[d1]])
+
+ss = StateSpace(a, b, c, d)
+
+tf = TransferFunction(ss)
+            
+print(ss)
+print(tf)
 ```
 
-```code
-result:
+#### Results:
 
-A = Matrix([[-b2, -b1, -b0], [1, 0, 0], [0, 1, 0]])
-B = Matrix([[1], [0], [0]])
-C = Matrix([[a2, a1, a0]])
-D = Matrix([[0]])
+```shell
+tf to ss test
+-------------
+
+G(s)=
+
+[                  2   ]
+[  a0 + a1*s + a2*s    ]
+[----------------------]
+[                2    3]
+[b0 + b1*s + b2*s  + s ]
+
+
+A=
+
+[-b2  -b1  -b0]
+[             ]
+[ 1    0    0 ]
+[             ]
+[ 0    1    0 ]
+
+B=
+
+[1]
+[ ]
+[0]
+[ ]
+[0]
+
+C=
+
+[a2  a1  a0]
+
+D=
+
+[0]
+
+
+ss to tf test
+-------------
+
+A=
+
+[a11  a12]
+[        ]
+[a21  a22]
+
+B=
+
+[b1]
+[  ]
+[b2]
+
+C=
+
+[c1  c2]
+
+D=
+
+[0]
+
+
+G(s)=
+
+[-(b1*(a21*c2 - c1*(a22 - s)) + b2*(a12*c1 - c2*(a11 - s))) ]
+[-----------------------------------------------------------]
+[               a12*a21 - (a11 - s)*(a22 - s)               ]
 ```
+
+
