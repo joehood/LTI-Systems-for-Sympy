@@ -7,6 +7,9 @@ from scipy.linalg import expm
 from scipy.integrate import quad
 
 
+PP_USE_UNICODE = True
+
+
 # ========================= LINALG UTIL FUNCTIONS ============================
 
 
@@ -245,7 +248,8 @@ class StateSpace(object):
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
         # get the coefficients of the monic least common denominator of all entries of G_sp
         # compute a least common denominator using utl and sp.lcm
-        lcd = sp.lcm(fraction_list(G_sp, only_denoms=True))
+        fl = fraction_list(G_sp, only_denoms=True)
+        lcd = sp.lcm(list(fl))
 
         # make it monic
         lcd = sp.simplify(lcd / sp.LC(lcd, s))
@@ -268,7 +272,7 @@ class StateSpace(object):
         for alpha in lcd_coeff[1:]:
             A = A.row_join((-1) * alpha * sp.eye(k))
 
-        for i in xrange(lcd_deg - 1):
+        for i in range(lcd_deg - 1):
             if i == 0:
                 tmp = sp.eye(k)
             else:
@@ -284,7 +288,7 @@ class StateSpace(object):
 
         # define B
         B = sp.eye(k)
-        for i in xrange(lcd_deg - 1):
+        for i in range(lcd_deg - 1):
             B = B.col_join(sp.zeros(k))
 
         # define C
@@ -310,7 +314,7 @@ class StateSpace(object):
         x0 : one-column sp.Matrix
             the state of the system at time t0
         t  : sp.Symbol, tuple (t,[list of times])
-            if t is only a sp.Symbol, the system is evaluated simbolycaly.
+            if t is only a sp.Symbol, the system is evaluated symbolically.
             if t is a tuple of a sp.Symbol and a list, the symstem is evaluated numericaly, at the given times in the list
         t0 = 0 : number
             the time t0 at which the state of the system is known
@@ -356,7 +360,7 @@ class StateSpace(object):
 
         try:
 
-            # if t symobl, then calculate the solution symbolicaly
+            # if t symobl, then calculate the solution symbolically
             if isinstance(t, sp.Symbol):
                 sol = self._solve_symbolicaly(u, x0, t, t0, do_integrals=do_integrals)
 
@@ -426,7 +430,7 @@ class StateSpace(object):
             sp.Integral = sp.zeros(self.represent[2].rows, 1)
 
             # Loop through every entry and evaluate the sp.Integral using mpmath.quad()
-            for row_idx in xrange(self.represent[2].rows):
+            for row_idx in range(self.represent[2].rows):
 
                 sp.Integral[row_idx, 0] = quad(lambda x: integrand(x)[row_idx, 0], t0, t_i)[0]
 
@@ -466,9 +470,9 @@ class StateSpace(object):
         integrand = sp.simplify(integrand.subs([(abs(t - tau), t - tau), (abs(tau - t), t - tau)]))
         sp.Integral = sp.zeros(integrand.shape[0], integrand.shape[1])
 
-        for col_idx in xrange(integrand.cols):
+        for col_idx in range(integrand.cols):
 
-            for row_idx in xrange(integrand.rows):
+            for row_idx in range(integrand.rows):
                 try:
                     if not integrand[row_idx, col_idx] == 0:
                         if do_integrals is True:
@@ -488,7 +492,7 @@ class StateSpace(object):
         """
 
         res = self.represent[1]
-        for i in xrange(self.represent[0].shape[0] - 1):
+        for i in range(self.represent[0].shape[0] - 1):
             res.col_join(self.represent[0] ** i * self.represent[1])
         return res
 
@@ -515,7 +519,7 @@ class StateSpace(object):
         """
 
         for eigenvect_of_A_tr in self.represent[0].transpose().eigenvects():
-            for idx in xrange(eigenvect_of_A_tr[1]):
+            for idx in range(eigenvect_of_A_tr[1]):
                 if (self.represent[1] * eigenvect_of_A_tr[2][idx]).is_zero:
                     return False
         return True
@@ -639,10 +643,10 @@ class StateSpace(object):
 
     def pretty(self):
 
-        a = sp.pretty(self.represent[0])
-        b = sp.pretty(self.represent[1])
-        c = sp.pretty(self.represent[2])
-        d = sp.pretty(self.represent[3])
+        a = sp.pretty(self.represent[0], use_unicode=PP_USE_UNICODE)
+        b = sp.pretty(self.represent[1], use_unicode=PP_USE_UNICODE)
+        c = sp.pretty(self.represent[2], use_unicode=PP_USE_UNICODE)
+        d = sp.pretty(self.represent[3], use_unicode=PP_USE_UNICODE)
 
         return "A=\n\n{0}\n\nB=\n\n{1}\n\nC=\n\n{2}\n\nD=\n\n{3}\n\n".format(a, b, c, d)
 
@@ -765,7 +769,7 @@ class TransferFunction(object):
 
     def pretty(self):
 
-        g = sp.pretty(self.G)
+        g = sp.pretty(self.G, use_unicode=PP_USE_UNICODE)
 
         return "G(s)=\n\n{0}\n\n".format(g)
 

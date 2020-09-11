@@ -4,6 +4,8 @@
 **/.vs
 **/__pycache__
 **/temp
+*.pyproj
+*.sln
 *.pyc
 *.pyd
 *.suo
