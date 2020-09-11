@@ -1,4 +1,4 @@
-# LTI-Systems-for-Sympy
+# Symbolic LTI System Tools for Python (symlti) 
 
 A package for linear, time invariant control systems for symbolic python. 
 
@@ -6,7 +6,7 @@ A package for linear, time invariant control systems for symbolic python.
 
 There is a python installer for this package. You can download the *.zip* file in the `dist` folder (which may not be up-to-date) or clone the whole repository using
 ```
-git clone https://github.com/m3zz0m1x/LTI-Systems-for-Sympy.gitd
+(coming soon)
 ```
 After extracting, cd to the direcory and run
 ```
@@ -34,10 +34,11 @@ print("C = {}".format(sys2.represent[2]))
 print("D = {}".format(sys2.represent[3]))
 ```
 
+```code
 result:
 
 A = Matrix([[-b2, -b1, -b0], [1, 0, 0], [0, 1, 0]])
 B = Matrix([[1], [0], [0]])
 C = Matrix([[a2, a1, a0]])
 D = Matrix([[0]])
-
+```
