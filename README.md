@@ -1,4 +1,4 @@
-# Symbolic LTI System Tools for Python (symlti) 
+# Symbolic LTI System Tools for Python (ltisym) 
 
 A package for linear, time invariant control systems for symbolic python. 
 
