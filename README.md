@@ -1,6 +1,6 @@
 # LTI-Systems-for-Sympy
 
-A package for linear, time invariant control systems for symbolic python. This is very new and has only basic functionality as transforming StateSpaceModels and TransferFunctionModels into one another and evaluating the systems symbolicaly and numericaly. Furthermore the `utils` module provides some basic tools the `models`module uses.
+A package for linear, time invariant control systems for symbolic python. 
 
 ## Installation
 
@@ -8,62 +8,36 @@ There is a python installer for this package. You can download the *.zip* file i
 ```
 git clone https://github.com/m3zz0m1x/LTI-Systems-for-Sympy.gitd
 ```
-After extracting, cd in the direcory and run
+After extracting, cd to the direcory and run
 ```
 python setup.py install
 ```
 
-## Usage
-
-Include the modules in your program using:
+### Creating and converting between models
+You can create a State Space and Transfer Function models symbolically, and convert bewteen them:
 ```python
-from lti_systems import *
+from sympy import *
+from lti_systems.models import StateSpaceModel as ss
+from lti_systems.models import TransferFunctionModel as tf
+
+var('s a0 a1 a2 b0 b1 b2')
+
+sfunc = (a2*s**2 + a1*s + a0)/(s**3 + b2*s**2 + b1*s + b0)
+
+sys1 = tf(Matrix([sfunc]))
+
+sys2 = ss(sys1)
+
+print("A = {}".format(sys2.represent[0]))
+print("B = {}".format(sys2.represent[1]))
+print("C = {}".format(sys2.represent[2]))
+print("D = {}".format(sys2.represent[3]))
 ```
 
-### Creating models
-You can create a 'StateSpaceModel' object using four matrices (state space representation) or a or 'TransferFunctionModel' using a transfer matrix:
-```python
-from sympy import *     # needed for matrix class
+result:
 
-var('a:d')
-A, B, C, D = Matrix([a]), Matrix([b]), Matrix([c]), Matrix([d])
+A = Matrix([[-b2, -b1, -b0], [1, 0, 0], [0, 1, 0]])
+B = Matrix([[1], [0], [0]])
+C = Matrix([[a2, a1, a0]])
+D = Matrix([[0]])
 
-var('s, num, denom')
-T = Matrix([num /denom], s)
-
-ssm = StateSpaceModel([A, B, C, D])
-tfm = TransferFunctionModel(T)
-```
-You can also create the models from one another:
-```python
-ssm2 = StateSpaceModel(tfm)
-tfm2 = TransferFunctionModel(ssm, s)
-```
-
-### Evaluating models
-Models are always evaluated using the `evaluate` method. It is done numercialy or symbolicaly, depending on the parameters of the call:
-```python
-# symbolic evaluation:
-var('t')
-u = Matrix([Heaviside(t)])
-x0 = zeros(1, 1)
-t0 = 0
-y = ssm.evaluate(u, x0, t, t0)
-
-# numerical evaluation
-import numpy as np
-y_list = ssm.evaluate(u, x0, (t, np.arange(0, 10, 0.1)), t0)
-```
-Note that the only difference between the calls is that in the second one, t is substituted by `(t, np.arange(0, 10, 0.1))`; a tuple of the symbol t and a list of times to evaluate for. 
-The first call will return a matrix valued expression in terms of t.
-The second call will return a list of matrix valued outputs, matching the time input.
-
-For details on syntax and additional methods, see the docstings of each class and its methods.
-
-## Contributing
-
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
