@@ -60,11 +60,61 @@ def test_ss2tf():
     print(ss)
     print(tf)
 
+
+def cascade():
+
+    """IEEE AC8B Exciter (simplified)
+                    
+                .--------.                                               
+    vref     .->|  Kpr   |----.                                        
+      |      |  '--------'    |                              
+    + v      |              + v       .--------.      .--------. 
+     ,-.  e  |  .--------. + ,-.  pid |   Ka   |      |   Ke   | 
+    ( S )----+->| Kir/s  |->( S )---->| ------ |----->| ------ |---> vfd
+     `-'     |  '--------'   `-'      | 1+s*Ta |  vr  | 1+s*Te | 
+    - ^      |  .--------.  + ^       '--------'      '--------' 
+      |      |  | s*Kdr  |    |          (x2)            (x3)
+     vt      '->| ------ |----'                        
+                | 1+s*Tr |                             
+                '--------'                             
+                 (x0, x1)                                    
+                           
+    """
+
+    sympy.var('s Kpr Kir Kdr Tdr Ka Ta Ke Te')
+
+    # define component transfer functions:
+
+    tf1 = ltisym.TransferFunction(Kpr + Kir/s + Kdr*s / (1 + s*Tdr))  
+    tf2 = ltisym.TransferFunction(Ka / (1 + s*Ta))                    
+    tf3 = ltisym.TransferFunction(Ke / (1 + s*Te))                    
+
+    # convert to state space models:
+
+    ss1 = ltisym.StateSpace(tf1)
+    ss2 = ltisym.StateSpace(tf2)
+    ss3 = ltisym.StateSpace(tf3)
+
+    # connect systems using the StateSpace.cascade function:
+
+    ss_ac8b = ss1.cascade(ss2).cascade(ss3)
+
+    # create transfer function version of the whole system:
+
+    tf_ac8b = ltisym.TransferFunction(ss_ac8b)
+
+    # display models:
+
+    print(tf_ac8b)
+    print(ss_ac8b)
+
+
 if __name__ == "__main__":
 
-    test_tf()
-    test_tf2ss()
-    test_ss2tf()
+    #test_tf()
+    #test_tf2ss()
+    #test_ss2tf()
+    cascade()
 
 
 

@@ -7,7 +7,7 @@ from scipy.linalg import expm
 from scipy.integrate import quad
 
 
-PP_USE_UNICODE = True
+PP_USE_UNICODE = False
 
 
 # ========================= LINALG UTIL FUNCTIONS ============================
@@ -175,7 +175,7 @@ class StateSpace(object):
             # store the argument as representation of the system
 
             try:
-                self.represent = arg[:4]
+                self.represent = a[:4]
 
             except TypeError:
                 raise TypeError("'repesentation' must be a list-like object")
@@ -613,7 +613,7 @@ class StateSpace(object):
         newC = self.represent[2].row_join(anotherSystem.represent[2])
         newD = self.represent[3] + anotherSystem.represent[3]
 
-        return StateSpace([newA, newB, newC, newD])
+        return StateSpace(newA, newB, newC, newD)
 
     def __getattr__(self, name):
 
