@@ -769,7 +769,7 @@ class TransferFunction(object):
 
     def pretty(self):
 
-        g = sp.pretty(self.G, use_unicode=PP_USE_UNICODE)
+        g = sp.pretty(self.G[0], use_unicode=PP_USE_UNICODE)
 
         return "G(s)=\n\n{0}\n\n".format(g)
 
