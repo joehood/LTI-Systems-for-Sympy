@@ -38,9 +38,9 @@ c = Matrix([[c1, c2]])
 
 d = Matrix([[d1]])
 
-ss = StateSpace(a, b, c, d)
+ss = ltisym.StateSpace(a, b, c, d)
 
-tf = TransferFunction(ss)
+tf = ltisym.TransferFunction(ss)
             
 print(ss)
 print(tf)
